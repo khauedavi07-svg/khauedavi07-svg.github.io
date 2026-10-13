@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geladeira Game</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(#182848, #4b6cb7);
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow: hidden;
+}
+
+#menu {
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 30px;
+    text-shadow: 0 3px 8px #000;
+}
+
+.scene {
+    width: 240px;
+    height: 380px;
+    perspective: 1000px;
+    margin: auto;
+}
+
+.fridge {
+    position: relative;
+    width: 240px;
+    height: 370px;
+    background: #cbd5df;
+    border: 5px solid #8c9ba9;
+    border-radius: 12px;
+    box-shadow: 0 20px 35px #0008;
+}
+
+.inside {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #263747, #516577);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    border-radius: 5px;
+}
+
+.shelf {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 5px;
+    background: #b9d2e2;
+}
+
+.shelf.one { top: 65px; }
+.shelf.two { top: 120px; }
+.shelf.three { bottom: 65px; }
+
+#playButton {
+    background: #20c977;
+    color: white;
+}
+
+.door {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(100deg, #f1f5f9, #aab7c4);
+    border: 3px solid #dce4ec;
+    border-radius: 7px;
+    transform-origin: left center;
+    transition: transform 1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: visible;
+}
+
+.door.open {
+    transform: rotateY(-110deg);
+}
+
+.handle {
+    position: absolute;
+    right: 15px;
+    top: 100px;
+    width: 12px;
+    height: 100px;
+    border-radius: 8px;
+    background: #536575;
+    box-shadow: inset 2px 0 3px #fff8;
+}
+
+.logo {
+    color: #617181;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    align-self: flex-start;
+    margin: 20px;
+}
+
+button {
+    padding: 13px 24px;
+    border: none;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform .2s, background .2s;
+}
+
+button:hover {
+    transform: scale(1.07);
+}
+
+#openButton {
+    margin-top: 20px;
+    background: #ffffff;
+    color: #24364b;
+}
+
+#game {
+    display: none;
+    text-align: center;
+    padding: 25px;
+}
+
+#game h2 {
+    font-size: 34px;
+}
+
+#exitButton {
+    background: #f04444;
+    color: white;
+    margin-top: 20px;
+}
+
+#counter {
+    font-size: 22px;
+    margin: 25px;
+}
+
+#clickButton {
+    background: #ffc83d;
+    color: #302400;
+    font-size: 20px;
+}
+
+#message {
+    min-height: 20px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="menu">
+    <h1>❄ GELADEIRA GAME</h1>
+
+    <div class="scene">
+        <div class="fridge">
+            <div class="inside">
+                <div class="shelf one"></div>
+                <div class="shelf two"></div>
+                <div class="shelf three"></div>
+
+                <button id="playButton" onclick="playGame()">
+                    ▶ JOGAR
+                </button>
+            </div>
+
+            <div class="door" id="door">
+                <div class="logo">FRIGOMAX</div>
+                <div class="handle"></div>
+            </div>
+        </div>
+    </div>
+
+    <button id="openButton" onclick="toggleDoor()">
+        🚪 ABRIR GELADEIRA
+    </button>
+</div>
+
+<div id="game">
+    <h2>🎮 MEU JOGO</h2>
+    <p>Bem-vindo! Você entrou na geladeira.</p>
+
+    <div id="counter">Pontos: 0</div>
+
+    <button id="clickButton" onclick="addPoint()">
+        ⭐ GANHAR PONTO
+    </button>
+
+    <br>
+
+    <button id="exitButton" onclick="exitGame()">
+        ✖ SAIR
+    </button>
+
+    <p id="message"></p>
+</div>
+
+<script>
+let isOpen = false;
+let points = 0;
+
+const door = document.getElementById("door");
+const openButton = document.getElementById("openButton");
+const playButton = document.getElementById("playButton");
+
+function toggleDoor() {
+    isOpen = !isOpen;
+
+    door.classList.toggle("open", isOpen);
+
+    openButton.textContent = isOpen
+        ? "🚪 FECHAR GELADEIRA"
+        : "🚪 ABRIR GELADEIRA";
+
+    playButton.style.visibility = isOpen
+        ? "visible"
+        : "hidden";
+}
+
+function playGame() {
+    if (!isOpen) return;
+
+    document.getElementById("menu").style.display = "none";
+    document.getElementById("game").style.display = "block";
+
+    points = 0;
+    updatePoints();
+}
+
+function addPoint() {
+    points++;
+    updatePoints();
+}
+
+function updatePoints() {
+    document.getElementById("counter").textContent =
+        "Pontos: " + points;
+}
+
+function exitGame() {
+    document.getElementById("game").style.display = "none";
+    document.getElementById("menu").style.display = "block";
+
+    // Fecha a porta automaticamente ao sair
+    isOpen = false;
+    door.classList.remove("open");
+
+    openButton.textContent = "🚪 ABRIR GELADEIRA";
+    playButton.style.visibility = "hidden";
+}
+</script>
+
+</body>
+</html>
